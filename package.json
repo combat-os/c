@@ -1,0 +1,31 @@
+{
+  "name": "@combat-os/root",
+  "version": "1.0.0",
+  "description": "COMBAT OS - Modular Military Battalion Operations System",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm --workspace=@combat-os/frontend run dev\" \"npm --workspace=@combat-os/backend run dev\"",
+    "dev:frontend": "npm --workspace=@combat-os/frontend run dev",
+    "dev:backend": "npm --workspace=@combat-os/backend run dev",
+    "build": "npm --workspace=@combat-os/frontend run build",
+    "build:frontend": "npm --workspace=@combat-os/frontend run build",
+    "start:backend": "npm --workspace=@combat-os/backend run start",
+    "test": "cd frontend && npm test && cd ../backend && npm test",
+    "setup": "./setup.sh",
+    "docs": "echo 'Documentation in /dokumentasi folder'"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "keywords": [
+    "military",
+    "battalion",
+    "operations",
+    "modular",
+    "combat"
+  ]
+}

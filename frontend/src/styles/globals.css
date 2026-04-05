@@ -1,0 +1,266 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BASE STYLES ===== */
+* {
+  @apply box-border;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  @apply bg-military-900 text-military-50 antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  line-height: 1.6;
+}
+
+/* ===== MILITARY THEME COMPONENTS ===== */
+
+/* Military Buttons */
+.btn-military {
+  @apply px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200 ease-in-out;
+  @apply bg-military-600 text-white border border-military-500;
+  @apply hover:bg-military-700 hover:border-military-400 hover:shadow-lg;
+  @apply active:scale-95 active:shadow-sm;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-military-900;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-military-600 disabled:hover:border-military-500;
+}
+
+.btn-military-primary {
+  @apply btn-military bg-blue-600 border-blue-500;
+  @apply hover:bg-blue-700 hover:border-blue-400;
+  @apply focus:ring-blue-500;
+}
+
+.btn-military-danger {
+  @apply btn-military bg-red-600 border-red-500;
+  @apply hover:bg-red-700 hover:border-red-400;
+  @apply focus:ring-red-500;
+}
+
+.btn-military-success {
+  @apply btn-military bg-green-600 border-green-500;
+  @apply hover:bg-green-700 hover:border-green-400;
+  @apply focus:ring-green-500;
+}
+
+.btn-military-ghost {
+  @apply btn-military bg-transparent border-military-600 text-military-300;
+  @apply hover:bg-military-800 hover:text-military-100;
+  @apply focus:ring-military-500;
+}
+
+/* Military Cards */
+.card-military {
+  @apply bg-military-800 border border-military-700 rounded-lg p-6;
+  @apply shadow-xl shadow-military-900/20;
+  @apply transition-all duration-200;
+}
+
+.card-military:hover {
+  @apply border-military-600 shadow-2xl;
+}
+
+/* Military Inputs */
+.input-military {
+  @apply w-full px-3 py-2 bg-military-700 border border-military-600 rounded-md;
+  @apply text-military-50 placeholder-military-400;
+  @apply transition-all duration-200;
+  @apply focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20 focus:bg-military-600;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.input-military::placeholder {
+  @apply text-military-500;
+}
+
+.input-military:focus::placeholder {
+  @apply text-military-600;
+}
+
+/* Military Select */
+.select-military {
+  @apply input-military cursor-pointer;
+  @apply appearance-none bg-no-repeat;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Military Backgrounds */
+.bg-military-gradient {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+}
+
+.bg-military-gradient-primary {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #1e40af 100%);
+}
+
+/* Military Text */
+.text-military-gradient {
+  background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Military Shadows */
+.shadow-military {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-military-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== COMPONENT SPECIFIC STYLES ===== */
+
+/* Header */
+.header-military {
+  @apply bg-military-800/95 backdrop-blur-sm border-b border-military-700;
+  @apply shadow-military;
+}
+
+/* Navigation */
+.nav-military {
+  @apply bg-military-800 border-b border-military-700;
+}
+
+.nav-military a {
+  @apply text-military-300 hover:text-blue-400 transition-colors duration-200;
+  @apply border-b-2 border-transparent hover:border-blue-400;
+}
+
+/* Tables */
+.table-military {
+  @apply w-full text-sm border-collapse;
+}
+
+.table-military th {
+  @apply text-left py-3 px-4 text-military-300 font-semibold bg-military-800 border-b border-military-700;
+}
+
+.table-military td {
+  @apply py-3 px-4 border-b border-military-700 text-military-50;
+}
+
+.table-military tr:hover {
+  @apply bg-military-700/50;
+}
+
+/* Form Groups */
+.form-group-military {
+  @apply space-y-2;
+}
+
+.form-group-military label {
+  @apply block text-military-300 font-semibold text-sm;
+}
+
+.form-group-military .form-help {
+  @apply text-xs text-military-500 mt-1;
+}
+
+/* Status Badges */
+.badge-military {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-military-success {
+  @apply badge-military bg-green-900 text-green-300 border border-green-700;
+}
+
+.badge-military-warning {
+  @apply badge-military bg-yellow-900 text-yellow-300 border border-yellow-700;
+}
+
+.badge-military-error {
+  @apply badge-military bg-red-900 text-red-300 border border-red-700;
+}
+
+.badge-military-info {
+  @apply badge-military bg-blue-900 text-blue-300 border border-blue-700;
+}
+
+/* Loading States */
+.loading-military {
+  @apply inline-block animate-spin rounded-full border-2 border-current border-t-transparent;
+}
+
+.loading-military-sm {
+  @apply loading-military h-4 w-4;
+}
+
+.loading-military-md {
+  @apply loading-military h-6 w-6;
+}
+
+.loading-military-lg {
+  @apply loading-military h-8 w-8;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+@media (max-width: 640px) {
+  .card-military {
+    @apply p-4;
+  }
+
+  .btn-military {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .input-military {
+    @apply px-2 py-2 text-base; /* Prevent zoom on iOS */
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.btn-military:focus-visible,
+.input-military:focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-opacity-50 ring-offset-2 ring-offset-military-900;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-military {
+    @apply border-2;
+  }
+
+  .card-military {
+    @apply border-2 border-military-600;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .btn-military,
+  .card-military {
+    @apply shadow-none border border-military-600;
+  }
+
+  body {
+    @apply text-black bg-white;
+  }
+
+  .military-text {
+    @apply text-black;
+  }
+}
