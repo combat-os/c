@@ -62,17 +62,47 @@ const getSqliteDb = async () => {
   return sqliteDb;
 };
 
+const convertPlaceholders = (text) => {
+  // Convert $1, $2, $3... to ?, ?, ?...
+  return text.replace(/\$\d+/g, '?');
+};
+
+const extractTableName = (sql) => {
+  const match = sql.match(/(?:INSERT INTO|UPDATE|DELETE FROM)\s+(\w+)/i);
+  return match ? match[1] : '';
+};
+
+const handleReturning = async (database, text, params) => {
+  if (text.toUpperCase().includes('RETURNING')) {
+    // Execute the statement
+    const result = await database.run(text.replace(/RETURNING.*/i, ''), params);
+    // Then fetch the inserted/updated row using lastID or a WHERE clause
+    if (text.trim().toUpperCase().startsWith('INSERT')) {
+      const fetched = await database.get('SELECT * FROM ' + extractTableName(text) + ' WHERE rowid = ?', [result.lastID]);
+      return { rows: fetched ? [fetched] : [], rowCount: result.changes };
+    }
+    return { rows: [], rowCount: result.changes };
+  }
+  return null;
+};
+
 const querySqlite = async (text, params = []) => {
   const database = await getSqliteDb();
   const start = Date.now();
 
   try {
+    const convertedText = convertPlaceholders(text);
+    const returningResult = await handleReturning(database, convertedText, params);
+    if (returningResult) {
+      return returningResult;
+    }
+
     let result;
-    if (text.trim().toUpperCase().startsWith('SELECT') || text.trim().toUpperCase().startsWith('PRAGMA')) {
-      result = await database.all(text, params);
+    if (convertedText.trim().toUpperCase().startsWith('SELECT') || convertedText.trim().toUpperCase().startsWith('PRAGMA')) {
+      result = await database.all(convertedText, params);
       return { rows: result, rowCount: result.length };
     } else {
-      result = await database.run(text, params);
+      result = await database.run(convertedText, params);
       return { rows: [{ id: result.lastID }], rowCount: result.changes };
     }
   } catch (error) {

@@ -14,7 +14,7 @@ const router = express.Router();
 router.get('/logs', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const isAdmin = req.query.admin === 'true'; // Simple flag, implement proper role system
+    const isAdmin = req.user?.role === 'admin'; // Simple flag, implement proper role system
 
     let queryStr = `
       SELECT 

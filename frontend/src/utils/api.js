@@ -41,8 +41,9 @@ apiClient.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (nrp) => apiClient.post('/auth/login', { nrp }),
+  login: (nrp, password) => apiClient.post('/auth/login', { nrp, password }),
   verify: () => apiClient.get('/auth/verify'),
+  logout: () => apiClient.post('/auth/logout'),
 };
 
 // Personnel API

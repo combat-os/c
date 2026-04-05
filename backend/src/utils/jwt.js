@@ -6,8 +6,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default_super_secret_key';
+if (!process.env.JWT_SECRET) {
+  throw new Error('CRITICAL: JWT_SECRET environment variable is required. Server cannot start without it.');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';
+
+const tokenBlacklist = new Set();
 
 /**
  * Generate JWT token for personnel
@@ -48,6 +54,26 @@ export const verifyToken = (token) => {
  */
 export const extractTokenFromHeader = (authHeader) => {
   if (!authHeader) return null;
+  if (!authHeader.startsWith('Bearer ')) return null;
+  return authHeader.substring(7);
+};
+
+/**
+ * Blacklist a token
+ * @param {string} token - Token to blacklist
+ */
+export const blacklistToken = (token) => {
+  tokenBlacklist.add(token);
+};
+
+/**
+ * Check if token is blacklisted
+ * @param {string} token - Token to check
+ * @returns {boolean} True if blacklisted
+ */
+export const isTokenBlacklisted = (token) => {
+  return tokenBlacklist.has(token);
+};
   const parts = authHeader.split(' ');
   if (parts.length !== 2 || parts[0] !== 'Bearer') return null;
   return parts[1];

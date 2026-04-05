@@ -3,17 +3,26 @@
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { loadModules, registerModules } from './modules/moduleLoader.js';
-import { authMiddleware, optionalAuthMiddleware } from './middleware/auth.js';
-import authRoutes from './routes/auth.js';
-import logsRoutes from './routes/logs.js';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Security middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // limit each IP to 200 requests per windowMs
+});
+app.use(limiter);
 
 // Middleware
 app.use(cors({
@@ -29,6 +38,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 
 // Health check (no auth required)
@@ -40,15 +52,14 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Authentication routes
-app.use('/api/auth', authRoutes);
-
-// Logs routes (requires auth)
-app.use('/api/logs', optionalAuthMiddleware, logsRoutes);
+// Legacy routes (will be phased out)
+// app.use('/api/auth', authRoutes);
+// app.use('/api/logs', optionalAuthMiddleware, logsRoutes);
 
 // Health status with module info
-app.get('/api/status', optionalAuthMiddleware, (req, res) => {
+app.get('/api/status', (req, res) => {
   const modules = {
+    // Legacy modules
     personnel: process.env.MODULE_PERSONNEL === 'true',
     qr_scan: process.env.MODULE_QR_SCAN === 'true',
     exit_form: process.env.MODULE_EXIT_FORM === 'true',
@@ -56,6 +67,13 @@ app.get('/api/status', optionalAuthMiddleware, (req, res) => {
     logistics: process.env.MODULE_LOGISTICS === 'true',
     security: process.env.MODULE_SECURITY === 'true',
     training: process.env.MODULE_TRAINING === 'true',
+
+    // New modular architecture
+    auth: process.env.MODULE_AUTH !== 'false', // Default enabled
+    pos: process.env.MODULE_POS !== 'false', // Default enabled
+    qr: process.env.MODULE_QR !== 'false', // Default enabled
+    logs: process.env.MODULE_LOGS !== 'false', // Default enabled
+    alerts: process.env.MODULE_ALERTS !== 'false', // Default enabled
   };
 
   res.status(200).json({
@@ -94,7 +112,7 @@ async function startServer() {
       res.status(err.status || 500).json({
         success: false,
         message: err.message || 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? err : undefined,
+        error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
       });
     });
 

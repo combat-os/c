@@ -2,10 +2,69 @@
 // Photo Upload Module Routes
 
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import { query } from '../../db/connection.js';
 import { authMiddleware } from '../../middleware/auth.js';
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = './uploads';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  }
+});
+
+/**
+ * POST /api/photo-upload/upload
+ * Upload a photo file
+ */
+router.post('/upload', authMiddleware, upload.single('photo'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded',
+      });
+    }
+
+    const photoUrl = `/uploads/${req.file.filename}`;
+
+    return res.status(200).json({
+      success: true,
+      message: 'Photo uploaded successfully',
+      photo_url: photoUrl,
+    });
+  } catch (error) {
+    console.error('Error uploading photo:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to upload photo',
+      error: error.message,
+    });
+  }
+});
 
 /**
  * POST /api/photo-upload/attach

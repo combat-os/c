@@ -2,10 +2,18 @@
 // Dynamic module loader based on environment variables
 
 const AVAILABLE_MODULES = {
+  // Legacy modules (existing)
   personnel: () => import('./personnel/router.js'),
   qr_scan: () => import('./qrScan/router.js'),
   exit_form: () => import('./exitForm/router.js'),
   photo_upload: () => import('./photoUpload/router.js'),
+
+  // New modular architecture modules
+  auth: () => import('./auth/authRoutes.js'),
+  pos: () => import('./pos/posRoutes.js'),
+  qr: () => import('./qr/qrRoutes.js'),
+  logs: () => import('./logs/logsRoutes.js'),
+  alerts: () => import('./alerts/alertRoutes.js'),
 };
 
 /**
@@ -41,8 +49,16 @@ export const loadModules = async () => {
  * @param {Object} modules - Loaded modules object
  */
 export const registerModules = (app, modules) => {
+  const MODULE_PATH_MAP = {
+    qr_scan: 'qr-scan',
+    exit_form: 'exit-form',
+    photo_upload: 'photo-upload',
+    personnel: 'personnel',
+  };
+
   Object.entries(modules).forEach(([moduleName, router]) => {
-    const basePath = `/api/${moduleName}`;
+    const mappedName = MODULE_PATH_MAP[moduleName] || moduleName.replace(/_/g, '-');
+    const basePath = `/api/${mappedName}`;
     app.use(basePath, router);
     console.log(`✓ Routes registered: ${basePath}`);
   });
